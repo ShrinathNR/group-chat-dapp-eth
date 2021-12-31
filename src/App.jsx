@@ -129,6 +129,33 @@ export default function App() {
 
   useEffect(() => {
     checkIfWalletIsConnected();
+    let wavePortalContract;
+
+    const onNewWave = (from, timestamp, message,waveNo) => {
+      console.log("NewWave", from, timestamp, message, waveNo);
+      setAllWaves(prevState => [
+        ...prevState,
+        {
+          address: from,
+          timestamp: new Date(timestamp * 1000),
+          message: message,
+          waveNo:waveNo,
+        },
+      ]);
+    };
+
+    if (window.ethereum) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+
+      wavePortalContract = new ethers.Contract(contractAddress, contractABI, signer);
+      wavePortalContract.on("NewWave", onNewWave);
+    }
+    return () => {
+    if (wavePortalContract) {
+      wavePortalContract.off("NewWave", onNewWave);
+    }
+  };
 
   }, [])
 
