@@ -4,7 +4,7 @@ import './App.css';
 import abi from "./utils/WavePortal.json"
 
 export default function App() {
-
+  const [isPending, setIsPending] = useState(true);
   const [currentAccount, setCurrentAccount] = useState("");
   const [allWaves, setAllWaves] = useState([]);
   const [totalWaves, setTotalWaves] = useState(0);
@@ -80,8 +80,6 @@ export default function App() {
         count = await wavePortalContract.getTotalWaves();
         console.log("Retrieved total wave count...", count.toNumber());
 
-        // printing all waves
-        console.log("displaying all waves:",allWaves);
 
       }else{
         console.log("ethereum object doesnt exist!!!");
@@ -99,21 +97,27 @@ export default function App() {
         const signer = provider.getSigner();
         const wavePortalContract = new ethers.Contract(contractAddress, contractABI, signer);
 
-        const waves = await wavePortalContract.getAllWaves();
-
-        let wavesCleaned = [];
-        waves.forEach(wave => {
-          wavesCleaned.push({
-            address: wave.waver,
-            timestamp: new Date(wave.timestamp * 1000),
-            message: wave.message,
-            waveNo: wave.waveNo,
+        // const waves = await wavePortalContract.getAllWaves();
+        wavePortalContract.getAllWaves()
+        .then(waves=>{
+          let wavesCleaned = [];
+          waves.forEach(wave => {
+            wavesCleaned.push({
+              address: wave.waver,
+              timestamp: new Date(wave.timestamp * 1000),
+              message: wave.message,
+              waveNo: wave.waveNo,
+            });
           });
-        });
+          console.log("waves cleaned:", wavesCleaned);
 
-        console.log("waves cleaned:", wavesCleaned)
 
-        setAllWaves(wavesCleaned)
+        // was getting a error for object as react child so added []
+        setAllWaves([wavesCleaned]);
+        // printing all waves
+        console.log("displaying all waves:",allWaves);
+        setIsPending(false);
+        })
 
       }else{
         console.log("ethereum object does not exist");
@@ -157,13 +161,13 @@ export default function App() {
             Connect your Wallet
           </button>
         )}
-
         {allWaves.map((wave, index) => {
+          console.log(wave);
           return (
             <div key={index} style={{ backgroundColor: "OldLace", marginTop: "16px", padding: "8px" }}>
               <div>Wave No.: {wave.waveNo}</div>
               <div>Address: {wave.address}</div>
-              <div>Time: {wave.timestamp.toString()}</div>
+              <div>Time: {wave.timestamp}</div>
               <div>Message: {wave.message}</div>
             </div>)
         })}
@@ -172,3 +176,4 @@ export default function App() {
     </div>
   );
 }
+
