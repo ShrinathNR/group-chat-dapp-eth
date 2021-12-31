@@ -10,7 +10,7 @@ export default function App() {
   const [totalWaves, setTotalWaves] = useState(0);
   const [text, setText] = useState("");
 
-  const contractAddress = "0xA56602D1Ac8AbA11d58761471B8D4D6CAE87D0Ea";
+  const contractAddress = "0x9f53af97c518d4DE2f19986e8DB8E172C3248451";
 
   const contractABI = abi.abi;
 
@@ -71,7 +71,7 @@ export default function App() {
         setTotalWaves(count.toNumber()+1);
 
         //wave no.n
-        const waveTxn = await wavePortalContract.wave(text);
+        const waveTxn = await wavePortalContract.wave(text, {gasLimit:300000});
         console.log("Mining...", waveTxn.hash);
 
         await waveTxn.wait();
@@ -106,14 +106,14 @@ export default function App() {
               address: wave.waver,
               timestamp: new Date(wave.timestamp * 1000),
               message: wave.message,
-              waveNo: wave.waveNo,
+              waveNo: wave.waveNo.toNumber(),
             });
           });
           console.log("waves cleaned:", wavesCleaned);
 
 
         // was getting a error for object as react child so added []
-        setAllWaves([wavesCleaned]);
+        setAllWaves(wavesCleaned);
         // printing all waves
         console.log("displaying all waves:",allWaves);
         setIsPending(false);
@@ -149,6 +149,7 @@ export default function App() {
         {
           wave();
           getAllWaves();
+          setText("");
         }
         }>
           Wave BRUH?
@@ -162,12 +163,12 @@ export default function App() {
           </button>
         )}
         {allWaves.map((wave, index) => {
-          console.log(wave);
+          console.log("all waves again",allWaves);
           return (
             <div key={index} style={{ backgroundColor: "OldLace", marginTop: "16px", padding: "8px" }}>
               <div>Wave No.: {wave.waveNo}</div>
               <div>Address: {wave.address}</div>
-              <div>Time: {wave.timestamp}</div>
+              <div>Time: {wave.timestamp.toString()}</div>
               <div>Message: {wave.message}</div>
             </div>)
         })}
