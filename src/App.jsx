@@ -179,7 +179,7 @@ export default function App() {
           setText("");
         }
         }>
-          Wave BRUH?
+          Send a Message 
         </button>
         
         {totalWaves && <p className="bio">Till now there are {totalWaves} waves including you</p>}
@@ -193,7 +193,7 @@ export default function App() {
           console.log("all waves again",allWaves);
           return (
             <div key={index} style={{ backgroundColor: "OldLace", marginTop: "16px", padding: "8px" }}>
-              <div>Wave No.: {wave.waveNo}</div>
+              <div>Message No.: {wave.waveNo}</div>
               <div>Address: {wave.address}</div>
               <div>Time: {wave.timestamp.toString()}</div>
               <div>Message: {wave.message}</div>
